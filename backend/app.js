@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+// Importation du modele Mongoose dans l'application.
+const thing = require("./models/thing");
 
 mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -12,6 +14,9 @@ mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/
 
 app.use(express.json());
 
+/**
+ * 
+ */
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -19,34 +24,34 @@ app.use((req, res, next) => {
     next();
 });
 
+/**
+ * 
+ */
 app.post("/api/stuff", (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({
-        message: "Objet créé !"
+    // Suppression de l'id car Mongoose en envoie un par defaut.
+    delete req.body._id;
+    // Creation d'une instance du modele.
+    const thnig = new thing({
+        // Raccourci JS pour recuperer l'objet plus rapidement.
+        ...req.body
     });
+    // Creation de la methode save qui enregistre notre methode dans la base de donnees.
+    thing.save()
+    // Renvoi de la reponse de reussite avec un code 201.
+    .then(() => res.status(201).json({message: "Objet enregistré !"}))
+    // Renvoi de la reponse d'erreur avec un code 400.
+    .catch(error => res.status(400).json({ error }));
 });
 
+/**
+ * 
+ */
 app.get('/api/stuff', (req, res, next) => {
-    const stuff = [
-        {
-            _id: 'oeihfzeoi',
-            title: 'Mon premier objet',
-            description: 'Les infos de mon premier objet',
-            imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-            price: 4900,
-            userId: 'qsomihvqios',
-        },
-        {
-            _id: 'oeihfzeomoihi',
-            title: 'Mon deuxième objet',
-            description: 'Les infos de mon deuxième objet',
-            imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-            price: 2900,
-            userId: 'qsomihvqios',
-        },
-    ];
-    res.status(200).json(stuff);
+    Thing.find()
+    // Recuperation des tableaux des things.
+    .then(things => res.status(200).json(things))
+    // Renvoi de la reponse d'erreur avec un code 400.
+    .catch(error => res.status(400).json({ error }));
 });
-
 
 module.exports = app;

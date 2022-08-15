@@ -1,4 +1,4 @@
-const thing = require("../models/thing")
+const Sauce = require("../models/saucesModel")
 
 /**
  * 
@@ -6,16 +6,16 @@ const thing = require("../models/thing")
  * @param {*} res 
  * @param {*} next 
  */
-exports.createThing = (req, res, next) => {
+exports.createSauce = (req, res, next) => {
     // Suppression de l'id car Mongoose en envoie un par defaut.
     delete req.body._id;
     // Creation d'une instance du modele.
-    const thnig = new thing({
+    const sauce = new Sauce({
         // Raccourci JS pour recuperer l'objet plus rapidement.
         ...req.body
     });
     // Creation de la methode save qui enregistre notre methode dans la base de donnees.
-    thing.save()
+    sauce.save()
         // Renvoi de la reponse de reussite avec un code 201.
         .then(() => res.status(201).json({ message: "Objet enregistré !" }))
         // Renvoi de la reponse d'erreur avec un code 400.
@@ -28,11 +28,11 @@ exports.createThing = (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-exports.modifyThing = (req, res, next) => {
+exports.modifySauce = (req, res, next) => {
     // Methode findOne pour trouver UN objet.
-    thing.findOne({ _id: req.params.id })
+    Sauce.findOne({ _id: req.params.id })
         // Renvoi de la reponse de reussite avec un code 200.
-        .then(thing => res.status(200).json(thing))
+        .then(sauce => res.status(200).json(sauce))
         // Renvoi de la reponse d'erreur avec un code 404.
         .catch(error => res.status(404).json({ error }));
 };
@@ -43,9 +43,9 @@ exports.modifyThing = (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-exports.deleteThing = (req, res, next) => {
+exports.deleteSauce = (req, res, next) => {
     // Methode deleteOne pour supprimer UN element.
-    thing.deleteOne({ _id: req.params.id })
+    Sauce.deleteOne({ _id: req.params.id })
         // Renvoi de la reponse de reussite avec un code 200.
         .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
         // Renvoi de la reponse d'erreur avec un code 400.
@@ -58,9 +58,9 @@ exports.deleteThing = (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-exports.getOnThing = (req, res, next) => {
+exports.getOneSauce = (req, res, next) => {
     // Methode updateOne pour mettre a jour UN element.
-    thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
         // Renvoi de la reponse de reussite avec un code 200.
         .then(() => res.status(200).json({ message: 'Objet modifié !' }))
         // Renvoi de la reponse d'erreur avec un code 400.
@@ -73,10 +73,10 @@ exports.getOnThing = (req, res, next) => {
  * @param {*} res 
  * @param {*} next 
  */
-exports.getAllThing = (req, res, next) => {
-    thing.find()
+exports.getAllSauce = (req, res, next) => {
+    Sauce.find()
         // Recuperation d'un tableau contenant tous les things dans notre bdd.
-        .then(things => res.status(200).json(things))
+        .then(sauces => res.status(200).json(sauces))
         // Renvoi de la reponse d'erreur avec un code 400.
         .catch(error => res.status(400).json({ error }));
 };

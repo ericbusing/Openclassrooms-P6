@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 // Importation du nouveau routeur.
-const stuffRoutes = require("./routes/stuff")
+const saucesRoutes = require("./routes/saucesRoutes")
 
 mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -24,6 +24,6 @@ app.use((req, res, next) => {
     next();
 });
 // Enregistrement du nouveau routeur.
-app.use("./api/stuff", stuffRoutes);
+app.use("/api/sauces", saucesRoutes);
 
 module.exports = app;

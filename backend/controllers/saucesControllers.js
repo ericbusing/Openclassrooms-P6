@@ -1,7 +1,7 @@
 const Sauce = require("../models/saucesModel")
 
 /**
- * 
+ * Creation de sauce.
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -9,47 +9,49 @@ const Sauce = require("../models/saucesModel")
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
-    delete sauceObject._userId;
+    // delete sauceObject._userId;
     const sauce = new Sauce({
         ...sauceObject,
-        useRId: req.auth.UserId,
-        imageUrl: `${req.protocole}://${req.get("host")}/images/${req.file.filename}`
+        // userId: req.auth.UserId,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
+        likes: 0,
+        dislikes: 0,
+        usersLiked: [],
+        usersDisliked: [],
     });
     sauce.save()
         .then(() => { res.status(201).json({ message: "Objet enregistré !" }) })
-        .catch(error => { res.status(400).json({ error }) })
-    // // Suppression de l'id car Mongoose en envoie un par defaut.
-    // delete req.body._id;
-    // // Creation d'une instance du modele.
-    // const sauce = new Sauce({
-    //     // Raccourci JS pour recuperer l'objet plus rapidement.
-    //     ...req.body
-    // });
-    // // Creation de la methode save qui enregistre notre methode dans la base de donnees.
-    // sauce.save()
-    //     // Renvoi de la reponse de reussite avec un code 201.
-    //     .then(() => res.status(201).json({ message: "Objet enregistré !" }))
-    //     // Renvoi de la reponse d'erreur avec un code 400.
-    //     .catch(error => res.status(400).json({ error }));
+        .catch(error => { res.status(400).json({ error }) });
 };
 
 /**
- * 
+ * Modification de sauce.
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
 exports.modifySauce = (req, res, next) => {
-    // Methode findOne pour trouver UN objet.
+    const sauceObject = req.file ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    } : { ...req.body };
     Sauce.findOne({ _id: req.params.id })
-        // Renvoi de la reponse de reussite avec un code 200.
-        .then(sauce => res.status(200).json(sauce))
-        // Renvoi de la reponse d'erreur avec un code 404.
-        .catch(error => res.status(403).json({ error }));
+        .then((sauce) => {
+            if (sauce.userId != req.auth.userId) {
+                res.status(401).json({ message: 'Not authorized' });
+            } else {
+                Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                    .then(() => res.status(200).json({ message: 'Objet modifié!' }))
+                    .catch(error => res.status(401).json({ error }));
+            }
+        })
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
 };
 
 /**
- * 
+ * Suppression de sauce.
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -64,22 +66,22 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 /**
- * 
+ * Fonction utile pour recuperer une sauce avec son id.
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
 exports.getOneSauce = (req, res, next) => {
-    // Methode updateOne pour mettre a jour UN element.
-    Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    // Methode findOne pour mettre a jour UN element.
+    Sauce.findOne({ _id: req.params.id })
         // Renvoi de la reponse de reussite avec un code 200.
-        .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+        .then((sauce) => res.status(200).json(sauce))
         // Renvoi de la reponse d'erreur avec un code 400.
         .catch(error => res.status(400).json({ error }));
 };
 
 /**
- * 
+ * Fonction utilisee pour voir toutes les sauces dans la bdd.
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
@@ -87,7 +89,7 @@ exports.getOneSauce = (req, res, next) => {
 exports.getAllSauce = (req, res, next) => {
     Sauce.find()
         // Recuperation d'un tableau contenant tous les things dans notre bdd.
-        .then(sauces => res.status(200).json(sauces))
+        .then(sauce => res.status(200).json(sauce))
         // Renvoi de la reponse d'erreur avec un code 400.
         .catch(error => res.status(400).json({ error }));
 };

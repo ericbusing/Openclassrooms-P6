@@ -10,9 +10,9 @@ const multer = require("../middleware/multer-config");
 
 // Ajout de auth comme argument avant les gestionnaires de routes pour les proteger.
 router.post("/", auth, multer, sauceCtrl.createSauce); 
-router.get('/:id', auth, sauceCtrl.modifySauce);
+router.put('/:id', auth, multer, sauceCtrl.modifySauce);
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
-router.put('/:id', auth, sauceCtrl.getOneSauce);
+router.get('/:id', auth, sauceCtrl.getOneSauce);
 router.get('/', auth, sauceCtrl.getAllSauce);
 
 module.exports = router;

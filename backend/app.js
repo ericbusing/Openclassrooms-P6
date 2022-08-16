@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-// Importation du nouveau routeur.
-const saucesRoutes = require("./routes/saucesRoutes")
+// Importation du routeur sauces.
+const saucesRoutes = require("./routes/saucesRoutes");
+// Importation du routeur users.
+const usersRoutes = require("./routes/usersRoutes");
 
 mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -23,7 +25,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
-// Enregistrement du nouveau routeur.
+// Enregistrement du routeur sauces.
 app.use("/api/sauces", saucesRoutes);
+// Enregistrement du routeur users.
+app.use("/api/auth", usersRoutes);
 
 module.exports = app;

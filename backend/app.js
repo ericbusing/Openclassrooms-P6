@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const saucesRoutes = require("./routes/saucesRoutes");
 // Importation du routeur users.
 const usersRoutes = require("./routes/usersRoutes");
+// Importation de path.
+const path = require('path');
 
 mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/?retryWrites=true&w=majority',
     {
@@ -29,5 +31,7 @@ app.use((req, res, next) => {
 app.use("/api/sauces", saucesRoutes);
 // Enregistrement du routeur users.
 app.use("/api/auth", usersRoutes);
+
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;

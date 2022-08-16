@@ -7,19 +7,30 @@ const Sauce = require("../models/saucesModel")
  * @param {*} next 
  */
 exports.createSauce = (req, res, next) => {
-    // Suppression de l'id car Mongoose en envoie un par defaut.
-    delete req.body._id;
-    // Creation d'une instance du modele.
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
+    delete sauceObject._userId;
     const sauce = new Sauce({
-        // Raccourci JS pour recuperer l'objet plus rapidement.
-        ...req.body
+        ...sauceObject,
+        useRId: req.auth.UserId,
+        imageUrl: `${req.protocole}://${req.get("host")}/images/${req.file.filename}`
     });
-    // Creation de la methode save qui enregistre notre methode dans la base de donnees.
     sauce.save()
-        // Renvoi de la reponse de reussite avec un code 201.
-        .then(() => res.status(201).json({ message: "Objet enregistré !" }))
-        // Renvoi de la reponse d'erreur avec un code 400.
-        .catch(error => res.status(400).json({ error }));
+        .then(() => { res.status(201).json({ message: "Objet enregistré !" }) })
+        .catch(error => { res.status(400).json({ error }) })
+    // // Suppression de l'id car Mongoose en envoie un par defaut.
+    // delete req.body._id;
+    // // Creation d'une instance du modele.
+    // const sauce = new Sauce({
+    //     // Raccourci JS pour recuperer l'objet plus rapidement.
+    //     ...req.body
+    // });
+    // // Creation de la methode save qui enregistre notre methode dans la base de donnees.
+    // sauce.save()
+    //     // Renvoi de la reponse de reussite avec un code 201.
+    //     .then(() => res.status(201).json({ message: "Objet enregistré !" }))
+    //     // Renvoi de la reponse d'erreur avec un code 400.
+    //     .catch(error => res.status(400).json({ error }));
 };
 
 /**
@@ -34,7 +45,7 @@ exports.modifySauce = (req, res, next) => {
         // Renvoi de la reponse de reussite avec un code 200.
         .then(sauce => res.status(200).json(sauce))
         // Renvoi de la reponse d'erreur avec un code 404.
-        .catch(error => res.status(404).json({ error }));
+        .catch(error => res.status(403).json({ error }));
 };
 
 /**

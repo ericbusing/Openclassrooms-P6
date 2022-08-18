@@ -9,13 +9,13 @@ const sauceCtrl = require("../controllers/saucesControllers")
 const multer = require("../middleware/multer-config");
 // Importation des controllers like.
 const like = require("../controllers/likesControllers");
-
+// Creation des routes pour les sauces.
 // Ajout de auth comme argument avant les gestionnaires de routes pour les proteger.
 router.post("/", auth, multer, sauceCtrl.createSauce); 
 router.put("/:id", auth, multer, sauceCtrl.modifySauce);
 router.delete("/:id", auth, sauceCtrl.deleteSauce);
 router.get("/:id", auth, sauceCtrl.getOneSauce);
 router.get("/", auth, sauceCtrl.getAllSauce);
-router.post("/:id/like", auth, like.likeDislike)
-
+router.post("/:id/like", auth, like.likeSauce)
+// Exportation du module.
 module.exports = router;

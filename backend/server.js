@@ -1,4 +1,6 @@
+// Declaration d'une constante contenant la requete http.
 const http = require("http");
+// Importation du dossier app.
 const app = require("./app");
 
 /**

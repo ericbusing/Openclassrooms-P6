@@ -1,4 +1,6 @@
+// Importation du modele de sauce.
 const Sauce = require("../models/saucesModel")
+// Importation du package fs.
 const fs = require("fs");
 
 /**

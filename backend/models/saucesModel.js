@@ -1,3 +1,4 @@
+// Importation de mongoose.
 const mongoose = require("mongoose");
 // Creation du modele avec un objet.
 const sauceSchema = mongoose.Schema({
@@ -8,10 +9,11 @@ const sauceSchema = mongoose.Schema({
     mainPepper: { type: String, required: true },
     imageUrl: { type: String, required: true },
     heat: { type: Number, required: true },
-    likes: { type: Number },
-    dislikes: { type: Number  },
+    // Systeme de like/dislike.
+    likes: { type: Number, defaut: 0 },
+    dislikes: { type: Number, defaut: 0 },
     usersLiked: { type: [String] },
     usersDisliked: { type: [String] },
 });
-
+// Exportation du module.
 module.exports = mongoose.model("sauce", sauceSchema);

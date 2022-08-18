@@ -1,4 +1,5 @@
 const Sauce = require("../models/saucesModel")
+const fs = require("fs");
 
 /**
  * Creation de sauce.
@@ -57,12 +58,26 @@ exports.modifySauce = (req, res, next) => {
  * @param {*} next 
  */
 exports.deleteSauce = (req, res, next) => {
-    // Methode deleteOne pour supprimer UN element.
-    Sauce.deleteOne({ _id: req.params.id })
-        // Renvoi de la reponse de reussite avec un code 200.
-        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
-        // Renvoi de la reponse d'erreur avec un code 400.
-        .catch(error => res.status(400).json({ error }));
+    // Recuperation de la sauce.
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            // Verification si l'userId est bien le bon.
+            if (sauce.userId != req.auth.userId) {
+                // Si ce n'est pas le bon, message d'erreur.
+                res.status(401).json({ message: "Non-autorisé" });
+                // Si c'est le bon.
+            } else {
+                // Recuperation du nom de fichier grace a split.
+                const filename = sauce.imageUrl.split("/images")[1];
+                fs.unlink(`images/${filename}`, () => {
+                    // Suppression de l'enregistrement dans la bdd.
+                    Sauce.deleteOne({ _id: req.params.id })
+                        .then(() => { res.status(200).json({ message: "Objet supprimé !" }) })
+                        .catch(error => res.status(401).json(error));
+                })
+            }
+        })
+        .catch(error => { res.status(500).json({ error }) });
 };
 
 /**

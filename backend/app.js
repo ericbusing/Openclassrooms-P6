@@ -7,8 +7,10 @@ const saucesRoutes = require("./routes/saucesRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 // Importation de path.
 const path = require('path');
+const dotenv = require("dotenv");
+const result = dotenv.config();
 
-mongoose.connect('mongodb+srv://EricB:Waltheisen13@cluster0.s7qp0zt.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true

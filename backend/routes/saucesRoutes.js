@@ -7,7 +7,7 @@ const auth = require("../middleware/auth");
 const sauceCtrl = require("../controllers/saucesControllers")
 // Importation du multer.
 const multer = require("../middleware/multer-config");
-const like = require("../controllers/like");
+const like = require("../controllers/likesControllers");
 
 // Ajout de auth comme argument avant les gestionnaires de routes pour les proteger.
 router.post("/", auth, multer, sauceCtrl.createSauce); 

@@ -26,7 +26,7 @@ exports.likeSauce = (req, res, next) => {
             // likes = 1 (likes +1).
             // Utilisation de la methode includes().
             if (!sauce.usersLiked.includes(req.body.userId) && req.body.likes === 1) {
-                // Mise a jour de la sauce dans la bdd.
+                // Mise a jour de la sauce dans la bdd, et de son array.
                 Sauce.updateOne(
                     { _id: req.params.id },
                     {
@@ -41,7 +41,7 @@ exports.likeSauce = (req, res, next) => {
             }
             // likes = 0 (likes = 0 , pas de vote).
             if (sauce.usersLiked.includes(req.body.userId) && req.body.likes === 0) {
-                // Mise a jour de la sauce dans la bdd.
+                // Mise a jour de la sauce dans la bdd, et de son array.
                 Sauce.updateOne(
                     { _id: req.params.id },
                     {
@@ -57,13 +57,10 @@ exports.likeSauce = (req, res, next) => {
 
             // likes = -1 (dislikes = +1).
             if (!sauce.usersDisliked.includes(req.body.userId) && req.body.likes === -1) {
-                // Mise a jour de la sauce dans la bdd.
                 Sauce.updateOne(
                     { _id: req.params.id },
                     {
-                        // Utilisation de l'operateur $inc.
                         $inc: { dislikes: 1 },
-                        // Utilisation de l'operateur $pull.
                         $push: { usersDisliked: req.body.userId }
                     }
                 )
@@ -73,13 +70,10 @@ exports.likeSauce = (req, res, next) => {
 
             // Apres un like = -1 on met un like 0 (likes = 0, pas de vote, on enleve le dislike).
             if (sauce.usersDisliked.includes(req.body.userId) && req.body.likes === 0) {
-                // Mise a jour de la sauce dans la bdd.
                 Sauce.updateOne(
                     { _id: req.params.id },
                     {
-                        // Utilisation de l'operateur $inc.
                         $inc: { dislikes: -1 },
-                        // Utilisation de l'operateur $pull.
                         $pull: { usersDisliked: req.body.userId }
                     }
                 )
